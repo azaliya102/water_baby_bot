@@ -20,7 +20,7 @@ IMAGES = [
 
 bot = telebot.TeleBot(TOKEN)
 
-REMINDER_TIMES = [(11, 0), (15, 0), (20, 0)]
+REMINDER_TIMES = [(11, 0), (16, 0), (22, 0)]
 sent_today = set()
 
 main_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
