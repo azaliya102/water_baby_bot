@@ -71,7 +71,7 @@ def handle_water_request(message):
                 height = int(parts[0])
                 weight = int(parts[1])
                 bsa = ((height * weight) / 3600) ** 0.5
-                water_need = int(bsa * 1200)  # мл в день
+                water_need = int(bsa * 1200)
                 bot.send_message(chat_id, f"You should drink about {water_need} ml a day! 💧")
                 user_states.pop(chat_id)
             except ValueError:
