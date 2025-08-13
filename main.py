@@ -58,7 +58,7 @@ user_states = {}
 def handle_water_request(message):
     chat_id = message.chat.id
 
-    bot.send_message(chat_id, "Choose an option:", reply_markup=main_markup)
+    bot.send_message(chat_id, "🐳!", reply_markup=main_markup)
 
     if message.text == "💧 Water Calculator":
         bot.send_message(chat_id, "Please send your height and weight in two numbers separated by a space!")
@@ -72,7 +72,7 @@ def handle_water_request(message):
                 weight = int(parts[1])
                 bsa = ((height * weight) / 3600) ** 0.5
                 water_need = int(bsa * 1200)
-                bot.send_message(chat_id, f"You should drink about {water_need} ml a day! 💧")
+                bot.send_message(chat_id, f"You should drink about {water_need}ml a day! 💧")
                 user_states.pop(chat_id)
             except ValueError:
                 bot.send_message(chat_id, "Please enter valid numbers like: 170 65")
