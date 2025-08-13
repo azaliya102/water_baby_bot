@@ -15,10 +15,15 @@ IMAGES = [
     os.getenv("SECOND_PIC"),
     os.getenv("THIRD_PIC")
 ]
+
 bot = telebot.TeleBot(TOKEN)
 
 REMINDER_TIMES = [(11, 0), (15, 0), (20, 0)]
 sent_today = set()
+
+main_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+calc_btn = types.KeyboardButton("💧 Water Calculator")
+main_markup.add(calc_btn)
 
 def send_photo():
     image = random.choice(IMAGES)
@@ -39,29 +44,26 @@ def reminder_loop():
 
 threading.Thread(target=reminder_loop, daemon=True).start()
 
-
 @bot.message_handler(commands=['start'])
 def start(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    calc_btn = types.KeyboardButton("💧 Water Calculator")
-    markup.add(calc_btn)
-
     bot.send_message(
         message.chat.id,
         "Hi! This is your water reminder!💧",
-        reply_markup=markup
+        reply_markup=main_markup
     )
 
 user_states = {}
+
 @bot.message_handler(content_types=['text'])
 def handle_water_request(message):
     chat_id = message.chat.id
+
+    bot.send_message(chat_id, "Choose an option:", reply_markup=main_markup)
+
     if message.text == "💧 Water Calculator":
-        bot.send_message(
-            message.chat.id,
-            "Please send your height and weight in two numbers separated by a space!"
-        )
+        bot.send_message(chat_id, "Please send your height and weight in two numbers separated by a space!")
         user_states[chat_id] = "waiting_for_data"
+
     elif user_states.get(chat_id) == "waiting_for_data":
         parts = message.text.split()
         if len(parts) == 2:
@@ -69,8 +71,8 @@ def handle_water_request(message):
                 height = int(parts[0])
                 weight = int(parts[1])
                 bsa = ((height * weight) / 3600) ** 0.5
-                water_need = int(bsa * 1200)
-                bot.send_message(chat_id, f"you should drink {water_need}ml a day!")
+                water_need = int(bsa * 1200)  # мл в день
+                bot.send_message(chat_id, f"You should drink about {water_need} ml a day! 💧")
                 user_states.pop(chat_id)
             except ValueError:
                 bot.send_message(chat_id, "Please enter valid numbers like: 170 65")
@@ -78,4 +80,3 @@ def handle_water_request(message):
             bot.send_message(chat_id, "Please send exactly two numbers separated by a space.")
 
 bot.polling(none_stop=True)
-
