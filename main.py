@@ -8,12 +8,14 @@ import random
 from telebot import types
 
 load_dotenv()
+
 TOKEN = os.getenv("TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+CHAT_IDS = [int(x) for x in os.getenv("CHAT_ID").split(",")]
 IMAGES = [
     os.getenv("FIRST_PIC"),
     os.getenv("SECOND_PIC"),
-    os.getenv("THIRD_PIC")
+    os.getenv("THIRD_PIC"),
+    os.getenv("FOURTH_PIC")
 ]
 
 bot = telebot.TeleBot(TOKEN)
@@ -27,8 +29,9 @@ main_markup.add(calc_btn)
 
 def send_photo():
     image = random.choice(IMAGES)
-    with open(image, 'rb') as img:
-        bot.send_photo(chat_id=CHAT_ID, photo=img, caption="🐦 Stay hydrated love! 💧")
+    for chat_id in CHAT_IDS:
+        with open(image, 'rb') as img:
+            bot.send_photo(chat_id=chat_id, photo=img, caption="🐦 Stay hydrated love! 💧")
 
 def reminder_loop():
     while True:
@@ -44,13 +47,6 @@ def reminder_loop():
 
 threading.Thread(target=reminder_loop, daemon=True).start()
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(
-        message.chat.id,
-        "Hi! This is your water reminder!💧",
-        reply_markup=main_markup
-    )
 
 user_states = {}
 
